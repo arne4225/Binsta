@@ -1,0 +1,112 @@
+{% extends 'layouts/app.twig' %}
+
+{% block title %}Zoeken{% endblock %}
+{% block header %}
+    <h1>Gebruikers zoeken</h1>
+{% endblock %}
+{% block styles %}
+    body {
+        font-family: Arial, sans-serif;
+        background: #f6f7fb;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        margin: 20px 0;
+        text-align: center;
+        color: #333;
+    }
+
+    .search-wrapper {
+        max-width: 560px;
+        margin: 20px auto 40px;
+        padding: 0 16px;
+    }
+
+    .search-summary {
+        color: #666;
+        margin-bottom: 16px;
+    }
+
+    ul.user-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    ul.user-list li {
+        background: white;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.1s ease;
+    }
+
+    ul.user-list li:hover {
+        transform: scale(1.01);
+    }
+
+    ul.user-list li.empty-state {
+        box-shadow: none;
+        background: transparent;
+        text-align: center;
+        color: #777;
+        padding: 20px 0;
+    }
+
+    .user-result {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #eee;
+        flex-shrink: 0;
+    }
+
+    .username {
+        display: block;
+        color: #888;
+        font-size: 13px;
+    }
+{% endblock %}
+{% block content %}
+    <div class="search-wrapper">
+        {% if query %}
+            <p class="search-summary">Resultaten voor "{{ query }}"</p>
+        {% endif %}
+
+        <ul class="user-list">
+            {% for user in users %}
+                <li>
+                    <a class="user-result" href="/user/show?id={{ user.id }}">
+                        {% if user.profile_photo %}
+                            <img class="user-avatar" src="/{{ user.profile_photo }}" alt="">
+                        {% else %}
+                            <span class="user-avatar"></span>
+                        {% endif %}
+                        <span>
+                            <strong>{{ user.display_name }}</strong>
+                            <span class="username">@{{ user.username }}</span>
+                        </span>
+                    </a>
+                </li>
+            {% else %}
+                {% if query %}
+                    <li class="empty-state">Geen gebruikers gevonden voor "{{ query }}".</li>
+                {% else %}
+                    <li class="empty-state">Typ een zoekterm om gebruikers te vinden.</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

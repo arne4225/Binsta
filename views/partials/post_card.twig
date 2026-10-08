@@ -1,0 +1,56 @@
+<div class="post-card">
+    <div class="post-header">
+        <a class="post-author" href="/user/show?id={{ post.user.id }}">
+            {% if post.user.profile_photo %}
+                <img class="post-avatar" src="/{{ post.user.profile_photo }}" alt="">
+            {% else %}
+                <span class="post-avatar post-avatar-placeholder"></span>
+            {% endif %}
+            <span>{{ post.user.display_name }}</span>
+        </a>
+        <span class="post-language">{{ post.language }}</span>
+    </div>
+
+    {% if post.forked_from %}
+        <p class="forked-from">Geforkt van <a href="/user/show?id={{ post.forked_from.user.id }}">@{{ post.forked_from.user.username }}</a></p>
+    {% endif %}
+
+    <pre class="post-code theme-{{ post.theme }}"><code class="language-{{ post.language }}">{{ post.code }}</code></pre>
+
+    {% if post.caption %}
+        <p class="post-caption">{{ post.caption }}</p>
+    {% endif %}
+
+    <div class="post-actions">
+        {% if currentUser %}
+            <form action="/post/like?id={{ post.id }}" method="POST" class="like-form">
+                <input type="hidden" name="csrf_token" value="{{ csrfToken }}">
+                <input type="hidden" name="back" value="{{ backUrl }}">
+                <button type="submit" class="like-button {{ post.liked_by_me ? 'liked' : '' }}">
+                    {{ post.liked_by_me ? '♥' : '♡' }} {{ post.like_count }}
+                </button>
+            </form>
+            <a class="fork-button" href="/post/fork?id={{ post.id }}">⑂ Fork</a>
+        {% else %}
+            <span class="like-count">♡ {{ post.like_count }}</span>
+        {% endif %}
+    </div>
+
+    <div class="post-comments">
+        {% for comment in post.comments %}
+            <div class="comment">
+                <a href="/user/show?id={{ comment.user.id }}"><strong>{{ comment.user.display_name }}</strong></a>
+                <span>{{ comment.content }}</span>
+            </div>
+        {% endfor %}
+
+        {% if currentUser %}
+            <form action="/post/comment?id={{ post.id }}" method="POST" class="comment-form">
+                <input type="hidden" name="csrf_token" value="{{ csrfToken }}">
+                <input type="hidden" name="back" value="{{ backUrl }}">
+                <input type="text" name="content" placeholder="Schrijf een reactie..." required>
+                <button type="submit">Plaats</button>
+            </form>
+        {% endif %}
+    </div>
+</div>

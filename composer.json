@@ -1,0 +1,14 @@
+{
+    "require": {
+        "twig/twig": "^3.25",
+        "gabordemooij/redbean": "^5.7"
+    },
+    "autoload": {
+        "files": [
+            "helpers.php"
+        ],
+        "classmap": [
+            "controllers/"
+        ]
+    }
+}

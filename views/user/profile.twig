@@ -1,0 +1,163 @@
+{% extends 'layouts/app.twig' %}
+
+{% block title %}Profiel wijzigen{% endblock %}
+{% block header %}
+    <h1>Profiel wijzigen</h1>
+{% endblock %}
+{% block styles %}
+    body {
+        font-family: Arial, sans-serif;
+        background: #f6f7fb;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        margin: 20px 0;
+        text-align: center;
+        color: #333;
+    }
+
+    h2 {
+        margin: 0 0 16px;
+        color: #333;
+        font-size: 18px;
+    }
+
+    .profile-wrapper {
+        max-width: 480px;
+        margin: 0 auto 40px;
+        padding: 0 16px;
+    }
+
+    .card {
+        background: white;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    main label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    main input[type="text"],
+    main input[type="password"],
+    main textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+    }
+
+    main textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    main input[type="file"] {
+        margin-bottom: 15px;
+    }
+
+    button {
+        background: #4a90e2;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #357ab8;
+    }
+
+    .error-message {
+        margin: 20px 0;
+        padding: 12px 16px;
+        background: #fff1f0;
+        border: 1px solid #f5c6cb;
+        border-radius: 8px;
+        color: #a71d2a;
+    }
+
+    .success-message {
+        margin: 20px 0;
+        padding: 12px 16px;
+        background: #eef9ee;
+        border: 1px solid #c6e6c6;
+        border-radius: 8px;
+        color: #1d7a1d;
+    }
+
+    .avatar-preview {
+        display: block;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        background: #eee;
+    }
+{% endblock %}
+{% block content %}
+    <div class="profile-wrapper">
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+        {% if success %}
+            <div class="success-message">{{ success }}</div>
+        {% endif %}
+
+        <div class="card">
+            <h2>Naam en biografie wijzigen</h2>
+            <form action="/user/updateprofile" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrfToken }}">
+                <label for="name">Naam:</label>
+                <input type="text" id="name" name="name" value="{{ currentUser.name|default('') }}">
+
+                <label for="bio">Biografie:</label>
+                <textarea id="bio" name="bio">{{ currentUser.bio|default('') }}</textarea>
+
+                <button type="submit">Opslaan</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Profielfoto uploaden</h2>
+            {% if currentUser.profile_photo %}
+                <img class="avatar-preview" src="/{{ currentUser.profile_photo }}" alt="Profielfoto">
+            {% endif %}
+            <form action="/user/uploadphoto" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrfToken }}">
+                <label for="photo">Kies een afbeelding:</label>
+                <input type="file" id="photo" name="photo" accept="image/png, image/jpeg, image/gif, image/webp" required>
+
+                <button type="submit">Uploaden</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Wachtwoord wijzigen</h2>
+            <form action="/user/changepassword" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrfToken }}">
+                <label for="current_password">Huidig wachtwoord:</label>
+                <input type="password" id="current_password" name="current_password" required>
+
+                <label for="new_password">Nieuw wachtwoord:</label>
+                <input type="password" id="new_password" name="new_password" required>
+
+                <label for="new_password_confirmation">Bevestig nieuw wachtwoord:</label>
+                <input type="password" id="new_password_confirmation" name="new_password_confirmation" required>
+
+                <button type="submit">Wachtwoord wijzigen</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

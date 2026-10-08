@@ -1,0 +1,314 @@
+{% extends 'layouts/app.twig' %}
+
+{% block title %}{{ profileUser.name|default(profileUser.username) }}{% endblock %}
+{% block header %}
+    <h1>{{ profileUser.name|default(profileUser.username) }}</h1>
+{% endblock %}
+{% block styles %}
+    body {
+        font-family: Arial, sans-serif;
+        background: #f6f7fb;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        margin: 20px 0;
+        text-align: center;
+        color: #333;
+    }
+
+    .feed-wrapper {
+        max-width: 640px;
+        margin: 0 auto 40px;
+        padding: 0 16px;
+    }
+
+    .profile-header {
+        max-width: 640px;
+        margin: 20px auto;
+        padding: 24px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 12px;
+    }
+
+    .profile-header h2 {
+        margin: 0;
+        color: #333;
+    }
+
+    .profile-header .username {
+        color: #888;
+        margin: 4px 0 12px;
+    }
+
+    .profile-header .bio {
+        color: #555;
+        white-space: pre-line;
+    }
+
+    .edit-profile-link {
+        display: inline-block;
+        margin-top: 12px;
+        color: #4a90e2;
+        text-decoration: none;
+    }
+
+    .edit-profile-link:hover {
+        text-decoration: underline;
+    }
+
+    .empty-state {
+        color: #777;
+        text-align: center;
+        margin: 40px 0;
+    }
+
+    .post-card {
+        background: white;
+        margin-bottom: 20px;
+        padding: 16px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .post-author {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #333;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .post-author:hover {
+        text-decoration: underline;
+    }
+
+    .post-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #eee;
+    }
+
+    .post-language {
+        background: #4a90e2;
+        color: white;
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+
+    .forked-from {
+        margin: 0 0 10px;
+        font-size: 13px;
+        color: #888;
+    }
+
+    .forked-from a {
+        color: #4a90e2;
+        text-decoration: none;
+    }
+
+    .forked-from a:hover {
+        text-decoration: underline;
+    }
+
+    .post-code {
+        margin: 0 0 12px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    .post-code code {
+        display: block;
+        padding: 14px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .theme-dark { background: #282c34; }
+    .theme-dark code { color: #abb2bf; }
+    .theme-dark .hljs-keyword, .theme-dark .hljs-selector-tag, .theme-dark .hljs-literal { color: #c678dd; }
+    .theme-dark .hljs-string, .theme-dark .hljs-doctag { color: #98c379; }
+    .theme-dark .hljs-comment, .theme-dark .hljs-quote { color: #5c6370; font-style: italic; }
+    .theme-dark .hljs-number { color: #d19a66; }
+    .theme-dark .hljs-title, .theme-dark .hljs-title.function_, .theme-dark .hljs-built_in, .theme-dark .hljs-type { color: #61afef; }
+    .theme-dark .hljs-attr, .theme-dark .hljs-attribute, .theme-dark .hljs-variable, .theme-dark .hljs-params { color: #e06c75; }
+
+    .theme-light { background: #f6f8fa; border: 1px solid #e1e4e8; }
+    .theme-light code { color: #24292e; }
+    .theme-light .hljs-keyword, .theme-light .hljs-selector-tag, .theme-light .hljs-literal { color: #d73a49; }
+    .theme-light .hljs-string, .theme-light .hljs-doctag { color: #032f62; }
+    .theme-light .hljs-comment, .theme-light .hljs-quote { color: #6a737d; font-style: italic; }
+    .theme-light .hljs-number { color: #005cc5; }
+    .theme-light .hljs-title, .theme-light .hljs-title.function_, .theme-light .hljs-built_in, .theme-light .hljs-type { color: #6f42c1; }
+    .theme-light .hljs-attr, .theme-light .hljs-attribute, .theme-light .hljs-variable, .theme-light .hljs-params { color: #22863a; }
+
+    .theme-dracula { background: #282a36; }
+    .theme-dracula code { color: #f8f8f2; }
+    .theme-dracula .hljs-keyword, .theme-dracula .hljs-selector-tag, .theme-dracula .hljs-literal { color: #ff79c6; }
+    .theme-dracula .hljs-string, .theme-dracula .hljs-doctag { color: #f1fa8c; }
+    .theme-dracula .hljs-comment, .theme-dracula .hljs-quote { color: #6272a4; font-style: italic; }
+    .theme-dracula .hljs-number { color: #bd93f9; }
+    .theme-dracula .hljs-title, .theme-dracula .hljs-title.function_, .theme-dracula .hljs-built_in, .theme-dracula .hljs-type { color: #50fa7b; }
+    .theme-dracula .hljs-attr, .theme-dracula .hljs-attribute, .theme-dracula .hljs-variable, .theme-dracula .hljs-params { color: #8be9fd; }
+
+    .theme-monokai { background: #272822; }
+    .theme-monokai code { color: #f8f8f2; }
+    .theme-monokai .hljs-keyword, .theme-monokai .hljs-selector-tag, .theme-monokai .hljs-literal { color: #f92672; }
+    .theme-monokai .hljs-string, .theme-monokai .hljs-doctag { color: #e6db74; }
+    .theme-monokai .hljs-comment, .theme-monokai .hljs-quote { color: #75715e; font-style: italic; }
+    .theme-monokai .hljs-number { color: #ae81ff; }
+    .theme-monokai .hljs-title, .theme-monokai .hljs-title.function_, .theme-monokai .hljs-built_in, .theme-monokai .hljs-type { color: #a6e22e; }
+    .theme-monokai .hljs-attr, .theme-monokai .hljs-attribute, .theme-monokai .hljs-variable, .theme-monokai .hljs-params { color: #66d9ef; }
+
+    .theme-solarized { background: #fdf6e3; border: 1px solid #eee8d5; }
+    .theme-solarized code { color: #657b83; }
+    .theme-solarized .hljs-keyword, .theme-solarized .hljs-selector-tag, .theme-solarized .hljs-literal { color: #859900; }
+    .theme-solarized .hljs-string, .theme-solarized .hljs-doctag { color: #2aa198; }
+    .theme-solarized .hljs-comment, .theme-solarized .hljs-quote { color: #93a1a1; font-style: italic; }
+    .theme-solarized .hljs-number { color: #d33682; }
+    .theme-solarized .hljs-title, .theme-solarized .hljs-title.function_, .theme-solarized .hljs-built_in, .theme-solarized .hljs-type { color: #268bd2; }
+    .theme-solarized .hljs-attr, .theme-solarized .hljs-attribute, .theme-solarized .hljs-variable, .theme-solarized .hljs-params { color: #cb4b16; }
+
+    .post-caption {
+        margin: 0 0 12px;
+        color: #333;
+    }
+
+    .post-actions {
+        margin-bottom: 12px;
+    }
+
+    .like-form {
+        display: inline;
+    }
+
+    .like-button {
+        background: none;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .like-button.liked {
+        background: #fff1f0;
+        border-color: #e74c3c;
+        color: #e74c3c;
+    }
+
+    .like-count {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .fork-button {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 6px 14px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        color: #333;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .fork-button:hover {
+        background: #f2f4f8;
+    }
+
+    .post-comments {
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+    }
+
+    .comment {
+        margin-bottom: 6px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .comment a {
+        color: #333;
+        text-decoration: none;
+        margin-right: 6px;
+    }
+
+    .comment-form {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .comment-form input[type="text"] {
+        flex: 1;
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+
+    .comment-form button {
+        background: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 14px;
+        cursor: pointer;
+    }
+
+    .comment-form button:hover {
+        background: #357ab8;
+    }
+{% endblock %}
+{% block content %}
+    <div class="profile-header">
+        {% if profileUser.profile_photo %}
+            <img class="profile-avatar" src="/{{ profileUser.profile_photo }}" alt="">
+        {% endif %}
+        <h2>{{ profileUser.name|default(profileUser.username) }}</h2>
+        <p class="username">@{{ profileUser.username }}</p>
+        {% if profileUser.bio %}
+            <p class="bio">{{ profileUser.bio }}</p>
+        {% endif %}
+        {% if currentUser and currentUser.id == profileUser.id %}
+            <a class="edit-profile-link" href="/user/profile">Profiel bewerken</a>
+        {% endif %}
+    </div>
+
+    <div class="feed-wrapper">
+        {% for post in posts %}
+            {% include 'partials/post_card.twig' with {'post': post, 'backUrl': '/user/show?id=' ~ profileUser.id} %}
+        {% else %}
+            <p class="empty-state">Deze gebruiker heeft nog geen posts geplaatst.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'layouts/app.twig' %}
+
+{% block title %}Nieuwe post{% endblock %}
+{% block header %}
+    <h1>Nieuwe post</h1>
+{% endblock %}
+{% block styles %}
+    body {
+        font-family: Arial, sans-serif;
+        background: #f6f7fb;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        margin: 20px 0;
+        text-align: center;
+        color: #333;
+    }
+
+    main form {
+        background: white;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    main label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    main input[type="text"],
+    main textarea,
+    main select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+    }
+
+    textarea#code {
+        font-family: 'Courier New', monospace;
+        min-height: 220px;
+        resize: vertical;
+    }
+
+    textarea#caption {
+        min-height: 60px;
+        resize: vertical;
+    }
+
+    button {
+        background: #4a90e2;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #357ab8;
+    }
+
+    .fork-banner {
+        max-width: 600px;
+        margin: 20px auto 0;
+        padding: 12px 16px;
+        background: #eef4fd;
+        border: 1px solid #cfe0f7;
+        border-radius: 8px;
+        color: #2a5a94;
+        font-size: 14px;
+    }
+
+    .fork-banner a {
+        color: #1a73e8;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .fork-banner a:hover {
+        text-decoration: underline;
+    }
+{% endblock %}
+{% block content %}
+    {% if forkedFrom %}
+        <div class="fork-banner">
+            Je forkt een code snippet van <a href="/user/show?id={{ forkedFrom.user.id }}">@{{ forkedFrom.user.username }}</a>.
+        </div>
+    {% endif %}
+
+    <form action="/post/create" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrfToken }}">
+        {% if forkedFrom %}
+            <input type="hidden" name="forked_from_id" value="{{ forkedFrom.id }}">
+        {% endif %}
+
+        <label for="language">Programmeertaal:</label>
+        <select id="language" name="language" required>
+            <option value="">Kies een taal</option>
+            {% for value, label in languages %}
+                <option value="{{ value }}" {% if prefill is defined and prefill.language == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="theme">Kleurenschema:</label>
+        <select id="theme" name="theme" required>
+            {% for value, label in themes %}
+                <option value="{{ value }}" {% if (prefill is defined and prefill.theme == value) or (prefill is not defined and value == 'dark') %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="code">Code snippet:</label>
+        <textarea id="code" name="code" placeholder="Plak hier je code..." required>{{ prefill.code|default('') }}</textarea>
+
+        <label for="caption">Bijschrift (optioneel):</label>
+        <textarea id="caption" name="caption" placeholder="Vertel iets over je code..."></textarea>
+
+        <button type="submit">Plaatsen</button>
+    </form>
+{% endblock %}

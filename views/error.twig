@@ -1,0 +1,45 @@
+{% extends 'layouts/app.twig' %}
+
+{% block title %}Fout {{ errorNumber }}{% endblock %}
+
+{% block header %}
+    <h1>Er is iets misgegaan</h1>
+{% endblock %}
+
+{% block styles %}
+    body {
+        background: #f6f7fb;
+    }
+
+    .error-card {
+        max-width: 640px;
+        margin: 48px auto;
+        padding: 28px;
+        background: #fff1f0;
+        border: 1px solid #f5c6cb;
+        border-radius: 14px;
+        color: #721c24;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .error-card h2 {
+        margin-top: 0;
+        color: #a71d2a;
+    }
+
+    .error-card p {
+        margin: 16px 0;
+    }
+{% endblock %}
+
+{% block content %}
+    <div class="error-card">
+        <h2>Fout {{ errorNumber }}</h2>
+        <p>{{ errorMessage }}</p>
+        <p>Ga terug naar de <a href="/">startpagina</a> of controleer de URL.</p>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <p>&copy; 2024 Mijn App</p>
+{% endblock %}

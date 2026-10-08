@@ -1,0 +1,207 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mijn App{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: linear-gradient(135deg, #14161f, #262a3b);
+            padding: 14px 24px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+        }
+        header h1 {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 6px 0 0;
+            text-align: center;
+        }
+        .header-bar {
+            display: grid;
+            grid-template-columns: 1fr minmax(160px, 420px) 1fr;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand {
+            justify-self: start;
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .brand:hover {
+            color: #6ea8f0;
+        }
+        .search-form {
+            justify-self: stretch;
+            display: flex;
+            width: 100%;
+        }
+        .search-form input[type="text"] {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 20px 0 0 20px;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-form button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 0 20px 20px 0;
+            background: #4a90e2;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .search-form button:hover {
+            background: #357ab8;
+        }
+        .auth-bar {
+            justify-self: end;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: white;
+            font-size: 14px;
+        }
+        .auth-bar a {
+            color: white;
+            background: #4a90e2;
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.15s ease;
+        }
+        .auth-bar a:hover {
+            background: #357ab8;
+        }
+        .auth-bar a.feed-button {
+            background: white;
+            color: #14161f;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 9px 22px;
+        }
+        .auth-bar a.feed-button:hover {
+            background: #dce6f7;
+        }
+        .account-menu {
+            position: relative;
+        }
+        .account-menu summary {
+            list-style: none;
+            cursor: pointer;
+            color: white;
+            background: #3a3f52;
+            padding: 6px 14px;
+            border-radius: 6px;
+            user-select: none;
+        }
+        .account-menu summary::-webkit-details-marker,
+        .account-menu summary::marker {
+            display: none;
+            content: '';
+        }
+        .account-menu summary:hover,
+        .account-menu[open] summary {
+            background: #4b5169;
+        }
+        .account-menu-list {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            min-width: 170px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            z-index: 20;
+        }
+        .account-menu-list a {
+            background: none;
+            color: #333;
+            padding: 9px 12px;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .account-menu-list a:hover {
+            background: #f2f4f8;
+        }
+        @media (max-width: 720px) {
+            .header-bar {
+                grid-template-columns: 1fr;
+            }
+            .brand {
+                justify-self: center;
+            }
+            .auth-bar {
+                justify-self: center;
+            }
+        }
+        {% block styles %}
+
+        {% endblock %}
+    </style>
+</head>
+<body>
+    <header>
+    <div class="header-bar">
+        <a class="brand" href="{{ currentUser ? '/feed/index' : '/user/login' }}">Binsta</a>
+
+        <form class="search-form" action="/user/search" method="GET">
+            <input type="text" name="q" placeholder="Zoek gebruikers..." autocomplete="off">
+            <button type="submit">Zoeken</button>
+        </form>
+
+        <div class="auth-bar">
+            {% if currentUser %}
+                <a class="feed-button" href="/feed/index">Feed</a>
+                <a href="/post/create">Nieuwe post</a>
+                <details class="account-menu">
+                    <summary>{{ currentUser.username }} &#9662;</summary>
+                    <div class="account-menu-list">
+                        <a href="/user/show?id={{ currentUser.id }}">Mijn profiel</a>
+                        <a href="/user/profile">Instellingen</a>
+                        <a href="/user/logout">Uitloggen</a>
+                    </div>
+                </details>
+            {% else %}
+                <a href="/user/login">Inloggen</a>
+                <a href="/user/register">Registreren</a>
+            {% endif %}
+        </div>
+    </div>
+    {% block header %}
+
+    {% endblock %}
+    </header>
+    <main>
+    {% block content %}
+
+    {% endblock %}
+    </main>
+    <footer>
+    {% block footer %}
+
+    {% endblock %}
+    </footer>
+    {% block scripts %}
+
+    {% endblock %}
+</body>
+</html>
